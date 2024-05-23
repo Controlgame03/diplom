@@ -1,5 +1,7 @@
 import os
 import struct
+import matplotlib.pyplot as plt
+import random
 
 def random_float(): 
     random_bytes = os.urandom(8)
@@ -37,12 +39,12 @@ def generate_intervals(n, stack_distribution):
     return result
 
 nodes_count = 5
-epoch_count = 365 #* 24 * 25 #(100 / 5)
-slot_count = 5 #* 24 * 60 * 60
+epoch_count = 100
+slot_count = 1
 initial_resources = 25000
 max_resources = 45000
 reserv_resources = max_resources - initial_resources
-prize_koef = 0.5
+prize_koef = 0.2
 winner_prize = reserv_resources * prize_koef
 stack_distribution = []
 winners = []
@@ -56,12 +58,15 @@ check_intervals = 1
 is_network_takeover = False
 
 for cur_epokh in range(0, epoch_count):
+    print('начало ', str(cur_epokh + 1), ' эпохи')
     winner_prize = reserv_resources * prize_koef
+    print(winner_prize)
+    intervals = generate_intervals(nodes_count, stack_distribution.copy())
     for cur_slot in range(0, slot_count):
-        intervals = generate_intervals(nodes_count, stack_distribution.copy())
+        print(str(cur_slot + 1), 'слот')
         random_number = random_float()
         interval_index = find_interval(random_number, intervals)
-
+        print('выиграл ', str(interval_index), ' узел')
         winners[interval_index] += 1
      
     for i in range(len(winners)):
@@ -81,15 +86,25 @@ for cur_epokh in range(0, epoch_count):
 
 
 if not(is_network_takeover):
-    print('the system worked ' + str(slot_count) + ' slots')
+    print('система работала корректно ' + str(epoch_count) + ' эпох( 1 эпоха =' + str(slot_count) + ' слотов)')
 print(absolute_to_relative_stack(len(stack_distribution), stack_distribution))
 print('total coins = ' + str(sum(stack_distribution)))
+
+
+data = stack_distribution
+
+plt.hist(data, bins=10, edgecolor='black')
+
+# Добавление заголовков и меток осей
+plt.title('Пример простой гистограммы')
+plt.xlabel('Значения')
+plt.ylabel('Частота')
+
+# Показ графика
+plt.show()
+
+
 print('end')
 
 
-
-# Разобраться с эпохами и слотами
-# Залить на гит
-# Посмотреть видос Криптокарлоса
-
-# Разобраться с графиками и уже начать делать диплом
+# модернизировать гистограммы и добавить еще 2 гистограммы

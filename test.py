@@ -1,27 +1,16 @@
-import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation
+import random
 
-# Создаем фигуру и оси
-fig, ax = plt.subplots()
-xdata, ydata = [], []
-ln, = plt.plot([], [], 'r-', animated=True)
+# Генерация данных
+data = [random.randint(1, 100) for _ in range(100)]
 
-# Инициализируем график
-def init():
-    ax.set_xlim(0, 2*np.pi)
-    ax.set_ylim(-1, 1)
-    return ln,
+# Построение гистограммы
+plt.hist(data, bins=10, edgecolor='black')
 
-# Функция обновления графика
-def update(frame):
-    xdata.append(frame)
-    ydata.append(np.sin(frame))
-    ln.set_data(xdata, ydata)
-    return ln,
+# Добавление заголовков и меток осей
+plt.title('Пример простой гистограммы')
+plt.xlabel('Значения')
+plt.ylabel('Частота')
 
-# Анимация
-ani = FuncAnimation(fig, update, frames=np.linspace(0, 2*np.pi, 128),
-                    init_func=init, blit=True)
-
+# Показ графика
 plt.show()
