@@ -38,7 +38,7 @@ def generate_intervals(n, stack_distribution):
 
 N = 10
 nodes_count = 3
-epoch_count = 36#5 * 24 #* 25 #(100 / 5)
+epoch_count = 365 * 24 * 25 #(100 / 5)
 slot_count = 5
 initial_resources = 25000
 max_resources = 45000
