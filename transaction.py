@@ -3,12 +3,15 @@ import struct
 import matplotlib.pyplot as plt
 import math
 import random
+import numpy as np
 
-def random_float(): 
+
+def random_float():
     random_bytes = os.urandom(8)
     random_number = struct.unpack("Q", random_bytes)[0]
     max_value = 2**64 - 1
     return random_number / max_value
+
 
 def capture_winning_prob(n, stack_distribution, index, algorithm):
     if algorithm == 'log':
@@ -20,7 +23,7 @@ def capture_winning_prob(n, stack_distribution, index, algorithm):
         for element in range(n):
             if stack_distribution[element] > maximum:
                 stack_distribution[element] = maximum
-    return (stack_distribution[index] / sum(stack_distribution)) 
+    return (stack_distribution[index] / sum(stack_distribution))
 
 
 def find_interval(value, intervals):
@@ -28,6 +31,7 @@ def find_interval(value, intervals):
         if start <= value < end:
             return i
     return None
+
 
 def new_koef_k1(n, stack_distribution, algorithm):
     result = 0
@@ -40,10 +44,12 @@ def new_koef_k1(n, stack_distribution, algorithm):
         for element in range(n):
             if stack_distribution[element] > maximum:
                 stack_distribution[element] = maximum
-    
+
     stack_distribution = absolute_to_relative_stack(n, stack_distribution)
-    result = max(stack_distribution) / (sum(stack_distribution) - max(stack_distribution))
+    result = max(stack_distribution) / \
+        (sum(stack_distribution) - max(stack_distribution))
     return result
+
 
 def new_koef_k2(n, stack_distribution, algorithm):
     result = 0
@@ -56,8 +62,7 @@ def new_koef_k2(n, stack_distribution, algorithm):
         for element in range(n):
             if stack_distribution[element] > maximum:
                 stack_distribution[element] = maximum
-    
-    #stack_distribution = absolute_to_relative_stack(n, stack_distribution)
+
     stack_distribution.sort(reverse=True)
     cur_koef = 0
     for i in range(1, len(stack_distribution)):
@@ -68,6 +73,7 @@ def new_koef_k2(n, stack_distribution, algorithm):
             result = cur_koef
     return result
 
+
 def absolute_to_relative_stack(n, stack_distribution):
     sum = 0
     result = [0 for i in range(n)]
@@ -76,6 +82,7 @@ def absolute_to_relative_stack(n, stack_distribution):
     for element in range(n):
         result[element] = stack_distribution[element] / sum
     return result
+
 
 def generate_intervals(n, stack_distribution, algorithm):
     if algorithm == 'log':
@@ -93,22 +100,27 @@ def generate_intervals(n, stack_distribution, algorithm):
 
     stack_distribution.insert(0, 0)
     for element in range(1, n):
-        stack_distribution[element] = stack_distribution[element] + stack_distribution[element - 1]
+        stack_distribution[element] = stack_distribution[element] + \
+            stack_distribution[element - 1]
     stack_distribution[len(stack_distribution) - 1] = 1.0
-    
+
     for cur_node in range(n):
-        result[cur_node] = (stack_distribution[cur_node], stack_distribution[cur_node + 1])
+        result[cur_node] = (stack_distribution[cur_node],
+                            stack_distribution[cur_node + 1])
 
     return result
 
-def poisson_stream(input_lambda): # сколько сообщений появилось в новом окне
+
+def poisson_stream(input_lambda):  # сколько сообщений появилось в новом окне
     messages_count = 0
     exp = math.exp(-input_lambda)
     random_int = random.random()
     while random_int > exp:
         messages_count += 1
-        exp += math.exp(-input_lambda) * (input_lambda**messages_count) / math.factorial(messages_count)
+        exp += math.exp(-input_lambda) * (input_lambda **
+                                          messages_count) / math.factorial(messages_count)
     return messages_count
+
 
 nodes_count = 100
 epoch_count = 10000
@@ -121,16 +133,16 @@ winner_prize = reserv_resources * prize_koef
 stack_distribution = []
 winners = []
 algorithm = 'lin'
-transaction_count = 1000
+transaction_count = 200
 delay = 20
 
-output_lambda = transaction_count/delay
-basic_input_lambda = 60
+output_lambda = transaction_count / delay
+basic_input_lambda = 60.0
 
 arguments = []
 values = []
 
-for input_lambda in range(1,basic_input_lambda, 1):
+for input_lambda in np.arange(1.0, basic_input_lambda, 0.5):
     transactions = []
     max_transaction_len = 10000
 
@@ -143,32 +155,31 @@ for input_lambda in range(1,basic_input_lambda, 1):
                 if len(transactions) != 0:
                     finish_transaction.append(transactions[0])
                     transactions.pop(0)
-            
 
             new_transactions = 0
             for i in range(delay):
                 new_transactions += poisson_stream(input_lambda)
             for i in range(new_transactions):
                 transactions.append(-10)
-            
+
             for i in range(len(transactions)):
                 transactions[i] += delay
-        
+
         if (len(transactions) >= max_transaction_len):
             is_broken = True
             break
-    
+
     if is_broken:
         arguments.append(input_lambda)
         values.append(1000)
         break
     else:
         arguments.append(input_lambda)
-        values.append(sum(finish_transaction)/len(finish_transaction))
+        values.append(sum(finish_transaction) / len(finish_transaction))
     print(input_lambda)
 
 plt.plot(arguments, values)
-plt.title('Зависимость ин-сти выход. потока от ин-сти вход. потока')
+plt.title('Зависимость времени ожидания транзакции от ин-сти вход. потока')
 plt.xlabel('Инт-сть вход.потока')
-plt.ylabel('Инт-сть выход.потока')
+plt.ylabel('Время ожидания транзакции')
 plt.show()
