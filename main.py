@@ -191,7 +191,10 @@ for i in range(1, nodes_count + 1):
     arguments.append(i)
 plt.plot(arguments, absolute_to_relative_stack(
     len(stack_distribution), stack_distribution))
-
+'''
+print(absolute_to_relative_stack(
+    len(stack_distribution), stack_distribution))
+'''
 plt.title('Зависимость количества стека от номера узла')
 plt.xlabel('Номер узла')
 plt.ylabel('Количество стека (доля от 1.00)')
@@ -201,11 +204,15 @@ arguments = []
 for i in range(epoch_count):
     arguments.append(i)
 
+font = 20
+plt.rcParams.update({'font.size': font})
+
 plt.plot(arguments, winning_prob)
-plt.title('Динамика изменения вероятности выигрыша конкретного(' +
-          str(winning_index + 1) + '-ого) пользователя')
-plt.xlabel('Номер эпохи')
-plt.ylabel('Вероятность выигрыша')
+
+plt.title('Динамика изменения вероятности выигрыша богатого узла в логарифмической модели', fontsize=(font + 2))
+plt.xlabel('Номер эпохи', fontsize=font)
+plt.ylabel('Вероятность выигрыша', fontsize=font)
+
 plt.show()
 
 

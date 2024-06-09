@@ -133,16 +133,16 @@ winner_prize = reserv_resources * prize_koef
 stack_distribution = []
 winners = []
 algorithm = 'lin'
-transaction_count = 200
+transaction_count = 50
 delay = 20
 
 output_lambda = transaction_count / delay
-basic_input_lambda = 60.0
+basic_input_lambda = 50
 
 arguments = []
 values = []
 
-for input_lambda in np.arange(1.0, basic_input_lambda, 0.5):
+for input_lambda in np.arange(0.1, basic_input_lambda, 0.1):
     transactions = []
     max_transaction_len = 10000
 
@@ -179,7 +179,9 @@ for input_lambda in np.arange(1.0, basic_input_lambda, 0.5):
     print(input_lambda)
 
 plt.plot(arguments, values)
-plt.title('Зависимость времени ожидания транзакции от ин-сти вход. потока')
-plt.xlabel('Инт-сть вход.потока')
-plt.ylabel('Время ожидания транзакции')
+font = 20
+plt.rcParams.update({'font.size': font})
+plt.title('Зависимость времени ожидания транзакции от ин-сти вход. потока', fontsize=font)
+plt.xlabel('Инт-сть вход.потока', fontsize=font)
+plt.ylabel('Время ожидания транзакции', fontsize=font)
 plt.show()

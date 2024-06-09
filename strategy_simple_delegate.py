@@ -82,7 +82,7 @@ for j in range(N):
     winner_prize = reserv_resources * prize_koef
 
     winners = []
-    algorithm = 'simple'
+    algorithm = 'lin'
 
     k1 = []
     k2 = []
